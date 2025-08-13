@@ -16,12 +16,18 @@ def get_secret(name):
     ).payload.data.decode()
 
 WEBHOOK_SECRET = get_secret("tradingview-webhook-secret")
+ALLOWED_IPS = {"52.89.214.238", "34.212.75.30", "54.218.53.128", "52.32.178.7"}
 
- @app.get("/health")
+@app.get("/health")
 def health(): return jsonify(ok=True), 200
 
- @app.post("/webhook/tradingview")
+@app.post("/webhook/tradingview")
 def tv_webhook():
+    # GCP's load balancer will add the client's IP to this header.
+    forwarded_for = request.headers.get('X-Forwarded-For')
+    if not forwarded_for or forwarded_for.split(',')[-1].strip() not in ALLOWED_IPS:
+        return jsonify(error="unauthorized ip"), 401
+
     try:
         body = request.get_json(force=True)
     except Exception:
