@@ -1,0 +1,5 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'us-central1-docker.pkg.dev/coinbase-production/cloud-run-source-deploy/tradingview-webhook', '.' ]
+images:
+- 'us-central1-docker.pkg.dev/coinbase-production/cloud-run-source-deploy/tradingview-webhook'
